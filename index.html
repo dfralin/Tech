@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Salem Tech Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #e0e7ff 0%, #f5f7fa 100%); color: #222; transition: background 0.3s, color 0.3s; }
+    .dark-mode { background: linear-gradient(135deg, #232946 0%, #141927 100%); color: #f0f4f8; }
+    .header { display: flex; align-items: center; padding: 20px 30px 0 30px; justify-content: space-between; flex-wrap: wrap; }
+    .header .logo { display: flex; align-items: center; gap: 15px; }
+    .header img { height: 56px; border-radius: 12px; box-shadow: 0 2px 8px #aaa4; }
+    .header-title { font-size: 2rem; font-weight: 700; letter-spacing: -2px; color: #4663ac; animation: popin 0.6s cubic-bezier(.34,1.56,.64,1) both; }
+    @keyframes popin { from { transform: scale(0.9) translateY(-30px); opacity:0; } to   { transform: scale(1) translateY(0); opacity:1; }}
+    .dark-mode .header-title { color: #c3cdfd; }
+    .controls { display: flex; gap: 15px; align-items: center; margin-top: 10px; }
+    #searchInput { padding: 8px 12px; font-size: 1rem; border-radius: 10px; border: 1px solid #bbb; background: #f5f7fa; transition: border 0.2s; min-width: 190px;}
+    .dark-mode #searchInput { background: #222738; color: #f0f4f8; border: 1px solid #394056;}
+    #themeToggle { background: #e0e7ff; border: none; font-size: 1.6rem; padding: 6px 14px; border-radius: 12px; cursor: pointer; transition: background 0.2s;}
+    .dark-mode #themeToggle { background: #232946; color: #f5f7fa;}
+    #backToTop { position: fixed; right: 24px; bottom: 30px; background: #a5b4fc; color: #222; border: none; padding: 10px 16px; font-size: 1.3rem; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 10px #7e7a7a2e; opacity: 0; pointer-events: none; z-index: 20; transition: opacity 0.25s, background 0.25s;}
+    #backToTop.show { opacity: 1; pointer-events: all;}
+    .dark-mode #backToTop { background: #394056; color: #f0f4f8;}
+    #card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 32px; padding: 30px 32px 70px 32px; max-width: 1440px; margin: auto;}
+    .card { background: rgba(255,255,255,0.78); border-radius: 2rem; box-shadow: 0 8px 28px 0 #7e7a7a19; padding: 30px 26px 24px 26px; position: relative; overflow: hidden; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; min-height: 120px; border: 2px solid #e0e7ff; display: flex; flex-direction: column; justify-content: flex-start; max-width: 560px; margin: 0 auto; backdrop-filter: blur(2.5px); animation: cardfadein 0.8s cubic-bezier(.34,1.56,.64,1) both;}
+    @keyframes cardfadein { from { opacity: 0; transform: scale(0.97) translateY(20px); } to   { opacity: 1; transform: scale(1) translateY(0); }}
+    .card h3 { font-size: 1.4rem; font-weight: 600; margin: 0 0 10px 0; display: flex; align-items: center; gap: 10px; color: #4663ac; letter-spacing: -1px;}
+    .dark-mode .card { background: rgba(35,41,70,0.93); border: 2px solid #232946; color: #f0f4f8; }
+    .dark-mode .card h3 { color: #a5b4fc;}
+    .card .details { max-height: 0; overflow: hidden; opacity: 0.4; transition: max-height 0.45s cubic-bezier(.34,1.56,.64,1), opacity 0.3s; font-size: 1rem; color: #333; margin-top: 0; pointer-events: none;}
+    .dark-mode .card .details { color: #e1e5ea;}
+    .card.open { transform: scale(1.035) translateY(-4px); box-shadow: 0 16px 42px 0 #7e7a7a33; z-index: 10;}
+    .card.open .details { max-height: 1600px; opacity: 1; margin-top: 14px; pointer-events: all;}
+    .card:hover:not(.open) { box-shadow: 0 8px 32px 0 #7e7a7a2c; transform: translateY(-3px) scale(1.02); }
+    .card ul, .card ol { margin-left: 1em; margin-bottom: 1em;}
+    .card li { margin-bottom: 0.38em; line-height: 1.6;}
+    .card code { font-family: 'Fira Mono', monospace; font-size: 0.98em; background: #f1f5fa; border-radius: 5px; padding: 1px 6px; margin: 0 2px; color: #3b3e50;}
+    .dark-mode .card code { background: #1c2235; color: #c3cdfd;}
+    .card a { color: #4663ac; text-decoration: underline; }
+    .dark-mode .card a { color: #a5b4fc; }
+    .card .fee-table { border-collapse: collapse; width: 100%; background: #f7faff; border-radius: 10px; margin-bottom: 1em;}
+    .fee-table th, .fee-table td { border: 1px solid #c7d0e1; padding: 7px 10px; text-align: left; font-size: 1em;}
+    .fee-table th { background: #e0e7ff; }
+    .fee-table td.fee { font-weight: bold;}
+    .card .emoji { font-size: 1.5em; vertical-align: -4px; margin-right: 5px; }
+    .hidden { display: none !important; }
+    .portal-footer { text-align: center; color: #6c7ea8; padding: 20px 10px 45px 10px; font-size: 1.03em; background: none; letter-spacing: .3px; position: fixed; width: 100%; left: 0; bottom: 0; z-index: 1; opacity: 0.8; pointer-events: none; user-select: none;}
+    .dark-mode .portal-footer { color: #b6c0ea;}
+    @media (max-width: 700px) {
+      .header { flex-direction: column; gap: 12px; padding: 14px 4vw 0 4vw; }
+      #card-container { padding: 20px 3vw 80px 3vw; }
+      .card { padding: 22px 8px 18px 8px; }
+    }
+    /* New fancy bounce animation for first card */
+    .card:first-child.open { animation: bounceOpen 0.44s both;}
+    @keyframes bounceOpen {
+      0%   { transform: scale(1.03) translateY(-8px); }
+      60%  { transform: scale(1.09) translateY(-10px); }
+      100% { transform: scale(1.035) translateY(-4px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="logo">
+      <img src="salem-logo.png" alt="Salem Logo" />
+      <span class="header-title">Salem Tech Portal</span>
+    </span>
+    <div class="controls">
+      <input id="searchInput" type="search" placeholder="Search topics..." />
+      <button id="themeToggle" aria-label="Toggle theme"></button>
+    </div>
+  </div>
+  <div id="card-container"></div>
+  <button id="backToTop" title="Back to top">⬆️</button>
+  <div class="portal-footer">
+    Built with ❤️ for Salem City Schools | Portal v1.0
+  </div>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const cards = [
+{
+        icon: "💡",
+        title: "How to Use This Portal",
+        htmlContent: `<ul>
+          <li><b>Click any card</b> to see all instructions and tips.</li>
+          <li><b>Use the search bar</b> to instantly filter cards (try "printer", "Chromebook", etc).</li>
+          <li><b>Dark Mode</b>: Click the moon/sun button (top right) to switch themes.</li>
+          <li><b>On mobile?</b> Tap cards to expand/collapse; search and dark mode work too!</li>
+          <li>Still stuck? <a href="https://1to1plus.com/login/salemcity_va" target="_blank">Contact Tech Help Desk 🆘</a></li>
+        </ul>`
+    },
+{
+        icon: "🛡️",
+        title: "Chromebook Care & Fees",
+        htmlContent: `<h2>🛡️ Chromebook Care & Fees</h2>
+    <ul>
+      <li>❤️ <b>Keep it Safe:</b> Close lid when not in use, hold lid closed, nothing on keyboard, don't squeeze into tight spaces/backpacks, keep food/drinks away, avoid extreme temps.</li>
+      <li>Insert cords/cables carefully. No stickers/writing. Wipe with microfiber only.</li>
+      <li><b>Daily Expectations:</b> Charge every night, bring daily, shut down weekly, be gentle, respect others' devices, no decorations.</li>
+    </ul>
+    <table class="fee-table" style="margin-top: 1em; width: 100%; border: 1px solid #c7d0e1;">
+      <tr><th>Lost Item</th><th>Fee</th></tr>
+      <tr><td>Chromebook</td><td class="fee">$250</td></tr>
+      <tr><td>Charger</td><td class="fee">$29</td></tr>
+      <tr><th colspan="2">Intentional/excessive damage</th></tr>
+      <tr><td>Screen</td><td class="fee">$50</td></tr>
+      <tr><td>Keyboard</td><td class="fee">$50</td></tr>
+      <tr><td>Motherboard</td><td class="fee">$100</td></tr>
+      <tr><td>Replacement</td><td class="fee">$250</td></tr>
+    </table>`
+    },
+{
+        icon: "💻",
+        title: "Chromebook Basics",
+        htmlContent: `<ul>
+  <li><b>Sign In:</b> Just enter your 5-digit student number. The email suffix <i>@salem.k12.va.us</i> is added automatically.</li>
+  <li><b>Sign Out:</b> Click the status area (lower right) → <b>Sign out</b>.</li>
+  <li><b>Shut Down:</b> Click status area → <b>Shut Down</b> icon.</li>
+  <li><b>Lock Your Screen:</b> Click status area → <b>Lock</b> or press <b>Search 🔎 + L</b>.</li>
+  <li><b>Offline Access:</b> Drive → Settings ⚙️ → Enable Offline.</li>
+  <li><b>Launcher:</b> Bottom-left icon or <b>Search</b> key to open apps/search.</li>
+  <li><b>Screenshots:</b> <code>Ctrl + Show Windows</code> (full), <code>Ctrl + Shift + Show Windows</code> (partial).</li>
+  <li><b>Touchpad Tips:</b> 
+    <ul>
+      <li>Move: slide finger</li>
+      <li>Click: press/tap lower half</li>
+      <li>Right-click: tap two fingers</li>
+      <li>Scroll: two-finger scroll</li>
+      <li>Drag: click one finger, move with another</li>
+    </ul>
+  </li>
+</ul>
+<h4>Keyboard Shortcuts</h4>
+<ul>
+  <li><b>Page Up/Down:</b> Alt + ↑ / ↓</li>
+  <li><b>Home/End:</b> Ctrl + Alt + ↑ / ↓</li>
+  <li><b>Delete:</b> Alt + Backspace</li>
+  <li><b>New Tab/Window:</b> Ctrl + T / Ctrl + N</li>
+  <li><b>Incognito:</b> Ctrl + Shift + N</li>
+  <li><b>Bookmark Bar:</b> Ctrl + Shift + B</li>
+  <li><b>Find:</b> Ctrl + F | <b>Lock:</b> Ctrl + Shift + L</li>
+</ul>`
+    },
+{
+        icon: "🖨️",
+        title: "Adding a Network Printer",
+        htmlContent: `<h2>🖨️ Adding a Network Printer</h2>
+        <ol>
+          <li>Click the File/Windows Explorer icon on the taskbar.</li>
+          <li>Click in the address bar and type: <code>\printers</code> (use the backslash above Enter).</li>
+          <li>You’ll see printers listed alphabetically by location:
+            <ul>
+              <li>ALMS - a</li><li>Central - c</li><li>East - e</li><li>GWC - g</li><li>Salem High - h</li><li>South - s</li><li>West - w</li>
+            </ul>
+          </li>
+          <li>Double-click the printer name to install it.</li>
+          <li>When a new window opens, click the <b>X</b> to close it.</li>
+        </ol>`
+    },
+{
+        icon: "📺",
+        title: "AirTame Setup & Use",
+        htmlContent: `<h2>📺 AirTame Setup & Use</h2>
+        <ol>
+          <li>Turn on the TV – HDMI or PC should display as “Recent.”</li>
+          <li>Open the AirTame app from your laptop (system tray or desktop).</li>
+          <li>Find your room’s AirTame (named by room number, like “A-215 Airtame”).</li>
+          <li>⭐ Click the Star icon to favorite your Airtame for quick access.</li>
+          <li>Choose <b>Share Window</b> or <b>Share Screen</b> to present.</li>
+          <li>Enter the 4-digit pin displayed by the projector.</li>
+          <li>Click the audio button to enable sound (off by default).</li>
+          <li>Click <b>Stop</b> when finished streaming.</li>
+        </ol>
+        <p>Note: A new pin is generated each session. AirTame is more reliable over Ethernet. The app is pre-installed on your school laptop.</p>`
+    },
+{
+        icon: "🔐",
+        title: "Google 2-Step Verification",
+        htmlContent: `<h2>🔐 Google 2-Step Verification</h2>
+        <p><b>Protect your Google Account with both your password and your phone.</b></p>
+        <ol>
+          <li>Go to <a href="https://myaccount.google.com" target="_blank">myaccount.google.com</a></li>
+          <li>Click <b>Security</b> in the left sidebar.</li>
+          <li>Under "Signing in to Google", click <b>2-Step Verification</b> → <b>Get Started</b>.</li>
+          <li>Enter your password.</li>
+          <li>Follow the prompts to select a second verification method and confirm it.</li>
+          <li>Click <b>Turn On</b>.</li>
+        </ol>
+        <p>You'll get an email confirming 2-Step Verification is active.</p>`
+    },
+{
+        icon: "📞",
+        title: "Cisco Voicemail Setup",
+        htmlContent: `<h2>📞 Cisco Voicemail Setup</h2>
+        <ol>
+          <li>Press the <b>Messages</b> button (envelope icon) on the phone.</li>
+          <li>Enter the initial PIN: <code>112233#</code></li>
+          <li>Record your name and press <b>#</b>.</li>
+          <li>Record your greeting and press <b>#</b>.</li>
+          <li>Create a new PIN (minimum 4 digits) and press <b>#</b>.</li>
+          <li>You're now ready to receive voicemail.</li>
+        </ol>`
+    },
+{
+        icon: "🆘",
+        title: "Help Desk – One to One Plus",
+        htmlContent: `<ul>
+  <li>Access the Help Desk via <b>Clever</b> under Employee Apps and Links.</li>
+  <li>Visit school websites – look under Teacher Resources for the Help Desk link.</li>
+  <li>Direct link: <a href="https://1to1plus.com/login/salemcity_va" target="_blank">https://1to1plus.com/login/salemcity_va</a></li>
+  <li><b>Sign in with Google</b> – no password needed!</li>
+</ul>`
+    }
+];
+
+  // THEME TOGGLE LOGIC
+  const themeToggle = document.getElementById('themeToggle');
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  if (currentTheme === 'dark') document.body.classList.add('dark-mode');
+  themeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    themeToggle.textContent = isDark ? '☀️' : '🌙';
+  });
+
+  // BACK TO TOP LOGIC
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => backToTop.classList.toggle('show', window.scrollY > 300));
+  backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // RENDER CARDS & SEARCH
+  const container = document.getElementById("card-container");
+  const searchInput = document.getElementById("searchInput");
+  cards.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<h3>${card.icon} ${card.title}</h3><div class="details">${card.htmlContent}</div>`;
+    div.addEventListener("click", () => div.classList.toggle("open"));
+    container.appendChild(div);
+    card.element = div;
+  });
+  searchInput.addEventListener("input", e => {
+    const val = e.target.value.toLowerCase();
+    cards.forEach(card => {
+      const txt = card.element.innerText.toLowerCase();
+      card.element.classList.toggle("hidden", !txt.includes(val));
+    });
+  });
+});
+  </script>
+</body>
+</html>
